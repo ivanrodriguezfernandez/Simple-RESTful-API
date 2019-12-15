@@ -1,0 +1,23 @@
+#FROM golang:latest 
+#RUN mkdir /app 
+#ADD . /app/ 
+#WORKDIR /app 
+#RUN go get github.com/gorilla/mux 
+#&& go build main.go  
+#CMD ["/app/main"]
+#CMD ["echo Press enter to continue; read dummy"]
+
+FROM golang:1.13 as builder
+
+WORKDIR /app
+COPY . /app
+RUN go get github.com/gorilla/mux 
+RUN CGO_ENABLED=0 GOOS=linux GOPROXY=https://proxy.golang.org go build -o app src/app/main.go
+
+FROM alpine:latest
+# mailcap adds mime detection and ca-certificates help with TLS (basic stuff)
+RUN apk --no-cache add ca-certificates mailcap && addgroup -S app && adduser -S app -G app
+USER app
+WORKDIR /app
+COPY --from=builder /app/app .
+ENTRYPOINT ["./app"]
