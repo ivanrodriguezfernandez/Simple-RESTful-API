@@ -1,12 +1,3 @@
-#FROM golang:latest 
-#RUN mkdir /app 
-#ADD . /app/ 
-#WORKDIR /app 
-#RUN go get github.com/gorilla/mux 
-#&& go build main.go  
-#CMD ["/app/main"]
-#CMD ["echo Press enter to continue; read dummy"]
-
 FROM golang:1.13 as builder
 
 WORKDIR /app
